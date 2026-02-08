@@ -1,0 +1,606 @@
+{
+  "info": {
+    "_postman_id": "c2f88205-5b9d-4fc2-a06b-8478392d9c42",
+    "name": "OpenWeather API Testing",
+    "description": "Authentication API tests for TaskFlow API. Covers functional, negative, and security scenarios.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "34427606"
+  },
+  "item": [
+    {
+      "name": "Invalid Scenarios",
+      "item": [
+        {
+          "name": "Current Weather – Invalid City",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 404\", () => pm.response.to.have.status(404));\r",
+                  "\r",
+                  "pm.test(\"Error message\", () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(body.message).to.eql(\"city not found\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{API_KEY}}",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/weather?q=NoCityHere&appid={{API_KEY}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "NoCityHere"
+                },
+                {
+                  "key": "appid",
+                  "value": "{{API_KEY}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Current Weather – Empty City",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 400 or 404\", () => {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Error message exists\", () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(body).to.have.property(\"message\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{API_KEY}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseURL}}/weather?q=&appid={{API_KEY}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": ""
+                },
+                {
+                  "key": "appid",
+                  "value": "{{API_KEY}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Missing API Key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 401\", () => pm.response.to.have.status(401));\r",
+                  "\r",
+                  "pm.test(\"Error message exists\", () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(body).to.have.property(\"message\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/weather?q=London",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "London"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid API Key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 401\", () => pm.response.to.have.status(401));\r",
+                  "\r",
+                  "pm.test(\"Error message exists\", () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(body).to.have.property(\"message\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/weather?q=London&appid=invalidkey\n",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "London"
+                },
+                {
+                  "key": "appid",
+                  "value": "invalidkey\n"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "City with Numbers",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 404\", () => pm.response.to.have.status(404));\r",
+                  "pm.test(\"Error message exists\", () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(body).to.have.property(\"message\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/weather?q=12345&appid={{API_KEY}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "12345"
+                },
+                {
+                  "key": "appid",
+                  "value": "{{API_KEY}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Long City Name",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Valid Scenarios",
+      "item": [
+        {
+          "name": "Current Weather – Valid City",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+                  "\r",
+                  "pm.test(\"Contains weather info\", () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(body).to.have.property(\"weather\");\r",
+                  "    pm.expect(body).to.have.property(\"main\");\r",
+                  "    pm.expect(body).to.have.property(\"name\",\"London\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{API_KEY}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/weather?q=London&appid={{API_KEY}}\n",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "London"
+                },
+                {
+                  "key": "appid",
+                  "value": "{{API_KEY}}\n"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Temperature Type",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Temp is number\", () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(typeof body.main.temp).to.eql(\"number\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/weather?q=London&appid={{API_KEY}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "London"
+                },
+                {
+                  "key": "appid",
+                  "value": "{{API_KEY}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Humidity Type",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Humidity is number\", () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(typeof body.main.humidity).to.eql(\"number\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/weather?q=London&appid={{API_KEY}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "London"
+                },
+                {
+                  "key": "appid",
+                  "value": "{{API_KEY}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Weather Array Exists",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Weather array exists\", () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(Array.isArray(body.weather)).to.be.true;\r",
+                  "    pm.expect(body.weather.length).to.be.above(0);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/weather?q=London&appid={{API_KEY}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "London"
+                },
+                {
+                  "key": "appid",
+                  "value": "{{API_KEY}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Content-Type Header",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {\r",
+                  "    pm.response.to.have.header(\"content-type\",\"application/json; charset=utf-8\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/weather?q=London&appid={{API_KEY}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "London"
+                },
+                {
+                  "key": "appid",
+                  "value": "{{API_KEY}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "City with Special Characters",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+                  "pm.test(\"City name correct\", () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(body.name).to.eql(\"São Paulo\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}weather?q=São Paulo&appid={{API_KEY}}",
+              "host": [
+                "{{baseURL}}weather"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "São Paulo"
+                },
+                {
+                  "key": "appid",
+                  "value": "{{API_KEY}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseURL",
+      "value": ""
+    },
+    {
+      "key": "API_KEY",
+      "value": ""
+    }
+  ]
+}
