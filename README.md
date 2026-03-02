@@ -1,5 +1,5 @@
 🧪 **QA Automation & Manual Testing Portfolio**
-API Testing Project – Weather API (Postman + Jira + Zephyr + Git)
+API Testing Project – Weather API (Postman + Jira + Zephyr + Git+ Playwright + TypeScript)
 
 👩‍💻 About Me
 
@@ -11,8 +11,9 @@ Experienced with:
 2. Jira (bug tracking & test management)
 3. Zephyr (test cases & execution)
 4. Git & GitHub (version control)
-5. Test planning & reporting
-6. This project demonstrates a complete QA workflow from test planning to bug reporting.
+5. Playwright + Typescript (Automated tests)
+6. Test planning & reporting
+7. This project demonstrates a complete QA workflow from test planning to bug reporting.
 
 
 **📌 Project Overview**
@@ -27,15 +28,17 @@ The goal is to demonstrate QA skills:
 4. Logging bugs
 5. Managing work in Jira
 6. Version control in Git
+7. Automated testing
 
 🛠 Tools & Technologies
 
 1. Postman – API testing & automation
 2. OpenWeatherMap API – Public API testing
-3. Jira – Bug tracking & test management
-4. Zephyr – Test case management
-5. GitHub – Version control & portfolio
-6. Excel – Test case documentation
+3. Playwright + Typescript - Automation testing
+4. Jira – Bug tracking & test management
+5. Zephyr – Test case management
+6. GitHub – Version control & portfolio
+7. Excel – Test case documentation
 
 🔍 Test Scope
 
@@ -81,6 +84,8 @@ Click Send to execute tests.
    
 Use Collection Runner in Postman.
 
+**playwright-ts-api-tests file**
+Automated API test suite for the OpenWeather Current Weather API, built with Playwright and TypeScript.
 
 
 🐞 Bug Reporting
