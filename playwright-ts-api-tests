@@ -2,26 +2,21 @@
 // PLAYWRIGHT + TYPESCRIPT — OpenWeather API Test Suite
 // Based on test cases: TC01–TC12
 // Docs: https://openweathermap.org/api
-// ============================================================
+
 
 import { test, expect, request } from "@playwright/test";
 
-// ============================================================
 // CONFIGURATION
 // Replace YOUR_API_KEY with your actual OpenWeather API key.
-// You can also store this in a .env file for safety —
-// never commit real API keys to Git!
-// ============================================================
+
 
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
 const API_KEY = process.env.API_KEY ?? "YOUR_API_KEY";
 
-// ============================================================
+
 // TYPE DEFINITIONS
 // Describes the shape of the OpenWeather API response.
-// TypeScript will warn you if you try to access a field
-// that doesn't exist — great for catching data issues early!
-// ============================================================
+
 
 type WeatherMain = {
   temp: number;
@@ -49,11 +44,11 @@ type ErrorResponse = {
   message: string;
 };
 
-// ============================================================
+
 // TC01 — SMOKE TEST: Current weather for a valid city
 // Type: Positive | Priority: High
 // Checks the API is up and returns data for a real city
-// ============================================================
+
 
 test("TC01 | Smoke | Current weather – valid city returns 200", async ({ request }) => {
   const response = await request.get(`${BASE_URL}/weather`, {
@@ -73,11 +68,10 @@ test("TC01 | Smoke | Current weather – valid city returns 200", async ({ reque
   expect(body.name).toBe("London");
 });
 
-// ============================================================
 // TC02 — NEGATIVE: Invalid city name
 // Type: Negative | Priority: High
 // API should return 404 with a "city not found" message
-// ============================================================
+
 
 test("TC02 | Negative | Invalid city returns 404", async ({ request }) => {
   const response = await request.get(`${BASE_URL}/weather`, {
@@ -92,11 +86,11 @@ test("TC02 | Negative | Invalid city returns 404", async ({ request }) => {
   expect(body.message.toLowerCase()).toContain("city not found");
 });
 
-// ============================================================
+
 // TC03 — NEGATIVE: Empty city parameter
 // Type: Negative | Priority: High
 // Sending an empty string should return 400 or 404
-// ============================================================
+
 
 test("TC03 | Negative | Empty city returns 400 or 404", async ({ request }) => {
   const response = await request.get(`${BASE_URL}/weather`, {
@@ -107,11 +101,11 @@ test("TC03 | Negative | Empty city returns 400 or 404", async ({ request }) => {
   expect([400, 404]).toContain(response.status());
 });
 
-// ============================================================
+
 // TC04 — NEGATIVE: Missing API key
 // Type: Negative | Priority: High
 // Request without any API key should be rejected as 401
-// ============================================================
+
 
 test("TC04 | Negative | Missing API key returns 401", async ({ request }) => {
   const response = await request.get(`${BASE_URL}/weather`, {
@@ -121,11 +115,11 @@ test("TC04 | Negative | Missing API key returns 401", async ({ request }) => {
   expect(response.status()).toBe(401);
 });
 
-// ============================================================
+
 // TC05 — NEGATIVE: Invalid API key
 // Type: Negative | Priority: High
 // A wrong API key should also be rejected as 401
-// ============================================================
+
 
 test("TC05 | Negative | Invalid API key returns 401", async ({ request }) => {
   const response = await request.get(`${BASE_URL}/weather`, {
@@ -135,12 +129,12 @@ test("TC05 | Negative | Invalid API key returns 401", async ({ request }) => {
   expect(response.status()).toBe(401);
 });
 
-// ============================================================
+
 // TC06 — DATA VALIDATION: Temperature is a number
 // Type: Positive | Priority: Medium
 // This is like your Webz.io field type checks —
 // make sure the data type returned is what we expect
-// ============================================================
+
 
 test("TC06 | Data Validation | Temperature field is a number", async ({ request }) => {
   const response = await request.get(`${BASE_URL}/weather`, {
@@ -155,11 +149,11 @@ test("TC06 | Data Validation | Temperature field is a number", async ({ request 
   expect(typeof body.main.temp).toBe("number");
 });
 
-// ============================================================
+
 // TC07 — DATA VALIDATION: Humidity is a number
 // Type: Positive | Priority: Medium
 // Same as TC06 but for the humidity field
-// ============================================================
+
 
 test("TC07 | Data Validation | Humidity field is a number", async ({ request }) => {
   const response = await request.get(`${BASE_URL}/weather`, {
@@ -177,11 +171,11 @@ test("TC07 | Data Validation | Humidity field is a number", async ({ request }) 
   expect(body.main.humidity).toBeLessThanOrEqual(100);
 });
 
-// ============================================================
+
 // TC08 — DATA VALIDATION: Weather array exists and is valid
 // Type: Positive | Priority: Medium
 // The weather field should be an array with at least one item
-// ============================================================
+
 
 test("TC08 | Data Validation | Weather array exists and is not empty", async ({ request }) => {
   const response = await request.get(`${BASE_URL}/weather`, {
@@ -200,11 +194,10 @@ test("TC08 | Data Validation | Weather array exists and is not empty", async ({ 
   expect(body.weather[0]).toHaveProperty("description");
 });
 
-// ============================================================
 // TC09 — HEADER CHECK: Content-Type is application/json
 // Type: Positive | Priority: Low
 // Verifies the API is returning JSON, not HTML or plain text
-// ============================================================
+
 
 test("TC09 | Header | Content-Type is application/json", async ({ request }) => {
   const response = await request.get(`${BASE_URL}/weather`, {
@@ -218,11 +211,11 @@ test("TC09 | Header | Content-Type is application/json", async ({ request }) => 
   expect(contentType).toContain("application/json");
 });
 
-// ============================================================
+
 // TC10 — POSITIVE: Special character city name
 // Type: Positive | Priority: Medium
 // Tests that the API handles UTF-8 / accented characters
-// ============================================================
+
 
 test("TC10 | Positive | Special character city (São Paulo) returns 200", async ({ request }) => {
   const response = await request.get(`${BASE_URL}/weather`, {
@@ -238,11 +231,11 @@ test("TC10 | Positive | Special character city (São Paulo) returns 200", async 
   expect(body.name).toBeTruthy();
 });
 
-// ============================================================
+
 // TC11 — NEGATIVE: Numeric city name
 // Type: Negative | Priority: Medium
 // A number string should not match any city and return 404
-// ============================================================
+
 
 test("TC11 | Negative | Numeric city name returns 404", async ({ request }) => {
   const response = await request.get(`${BASE_URL}/weather`, {
@@ -252,11 +245,10 @@ test("TC11 | Negative | Numeric city name returns 404", async ({ request }) => {
   expect(response.status()).toBe(404);
 });
 
-// ============================================================
+
 // TC12 — NEGATIVE: Very long city name string
 // Type: Negative | Priority: Low
 // Edge case — a 38-character random string should not match
-// ============================================================
 
 test("TC12 | Negative | Very long city name returns 404", async ({ request }) => {
   const response = await request.get(`${BASE_URL}/weather`, {
